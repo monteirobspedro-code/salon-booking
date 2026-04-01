@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le Salon — Rendez-vous</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/dashboard.css" />
+</head>
+<body>
+
+  <!-- Decorative background -->
+  <div class="bg-texture" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="brand-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.5 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/><path d="M14.5 17a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/>
+          <path d="M2 2l20 20"/><path d="M2 22 14 10"/><path d="m7 7 3 3"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">Le Salon</div>
+        <div class="brand-sub">Tableau de bord</div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="date-nav">
+        <button class="date-arrow" id="btn-prev-day" aria-label="Jour précédent">&#8592;</button>
+        <div class="date-display" id="date-display">–</div>
+        <button class="date-arrow" id="btn-next-day" aria-label="Jour suivant">&#8594;</button>
+      </div>
+      <input type="date" id="date-picker" class="date-input-hidden" />
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-new" id="btn-new">
+        <span class="btn-new-icon">+</span>
+        <span>Nouveau RDV</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Stat cards -->
+    <section class="stats" aria-label="Statistiques du jour">
+      <div class="stat-card" id="card-total">
+        <div class="stat-label">Total du jour</div>
+        <div class="stat-value" id="stat-total">–</div>
+        <div class="stat-bar"></div>
+      </div>
+      <div class="stat-card accent" id="card-confirmed">
+        <div class="stat-label">Confirmés</div>
+        <div class="stat-value" id="stat-confirmed">–</div>
+        <div class="stat-bar"></div>
+      </div>
+      <div class="stat-card muted" id="card-cancelled">
+        <div class="stat-label">Annulés</div>
+        <div class="stat-value" id="stat-cancelled">–</div>
+        <div class="stat-bar"></div>
+      </div>
+      <div class="stat-card dim" id="card-completed">
+        <div class="stat-label">Terminés</div>
+        <div class="stat-value" id="stat-completed">–</div>
+        <div class="stat-bar"></div>
+      </div>
+      <div class="stat-card revenue" id="card-revenue">
+        <div class="stat-label">Chiffre d'affaires</div>
+        <div class="stat-value mono" id="stat-revenue">–</div>
+        <div class="stat-bar"></div>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="search" class="search-input" placeholder="Rechercher client ou téléphone…" />
+      </div>
+      <div class="filter-pills">
+        <button class="pill active" data-status="">Tous</button>
+        <button class="pill" data-status="confirmed">Confirmés</button>
+        <button class="pill" data-status="completed">Terminés</button>
+        <button class="pill" data-status="cancelled">Annulés</button>
+        <button class="pill" data-status="no_show">Absents</button>
+      </div>
+      <select id="filter-status" class="visually-hidden" aria-label="Filtrer par statut">
+        <option value="">Tous les statuts</option>
+        <option value="confirmed">Confirmé</option>
+        <option value="cancelled">Annulé</option>
+        <option value="completed">Terminé</option>
+        <option value="no_show">Absent</option>
+      </select>
+    </div>
+
+    <!-- Appointments -->
+    <div class="table-wrap">
+      <table class="appt-table" aria-label="Liste des rendez-vous">
+        <thead>
+          <tr>
+            <th class="col-id">Réf.</th>
+            <th class="col-time">Heure</th>
+            <th class="col-client">Client</th>
+            <th class="col-service">Service</th>
+            <th class="col-status">Statut</th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="appointments-body">
+          <tr><td colspan="6" class="empty-state">
+            <div class="empty-icon">✦</div>
+            <div>Chargement…</div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay hidden" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">Nouveau rendez-vous</h2>
+        <button class="modal-close" id="btn-cancel-modal" aria-label="Fermer">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-phone">Téléphone <span class="required">*</span></label>
+            <input type="tel" id="f-phone" placeholder="+41 79 000 00 00" />
+          </div>
+          <div class="form-group">
+            <label for="f-name">Nom du client</label>
+            <input type="text" id="f-name" placeholder="Optionnel" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="f-service">Service <span class="required">*</span></label>
+          <select id="f-service"></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-date">Date <span class="required">*</span></label>
+            <input type="date" id="f-date" />
+          </div>
+          <div class="form-group">
+            <label for="f-slot">Créneau <span class="required">*</span></label>
+            <select id="f-slot"><option value="">Sélectionnez une date</option></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="f-notes">Notes</label>
+          <textarea id="f-notes" placeholder="Instructions spéciales, préférences…" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" id="btn-cancel-modal-2">Annuler</button>
+        <button class="btn-confirm" id="btn-submit">Confirmer le RDV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

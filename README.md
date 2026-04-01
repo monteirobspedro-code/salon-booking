@@ -4,8 +4,8 @@ A WhatsApp booking system for a barbershop. Clients book appointments through Wh
 
 ## Stack
 
-- **Backend**: Node.js + Express
-- **Database**: SQLite via `better-sqlite3`
+- **Backend**: Node.js 22.12+ + Express
+- **Database**: SQLite via built-in `node:sqlite` (no native compilation)
 - **WhatsApp**: Twilio WhatsApp API (sandbox or production)
 - **Frontend**: Vanilla HTML/CSS/JS dashboard
 

@@ -20,7 +20,7 @@ app.use('/api/stats', require('./api/statsRouter'));
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Salon booking server running on http://localhost:${PORT}`);
-  console.log(`Webhook Twilio : POST http://localhost:${PORT}/webhook`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Salon booking server running on http://0.0.0.0:${PORT}`);
+  console.log(`Webhook Twilio : POST http://0.0.0.0:${PORT}/webhook`);
 });

@@ -658,28 +658,420 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ── Responsive ──────────────────────────────────────────────────────────── */
+/* ── Touch polish (all sizes) ─────────────────────────────────────────────── */
+a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
+button, input, select, textarea { touch-action: manipulation; }
+
+/* ── Tablet (≤960px) ─────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
   .stats { grid-template-columns: repeat(3, 1fr); }
 }
 
-@media (max-width: 720px) {
-  .header {
-    grid-template-columns: auto 1fr;
-    padding: 0 1rem;
-  }
-  .header-center { order: 3; grid-column: 1 / -1; display: none; }
-  .header-actions { justify-content: flex-end; }
-  .stats { grid-template-columns: 1fr 1fr; }
-  .main { padding: 1.25rem 1rem 4rem; }
-  .toolbar { gap: 0.5rem; }
+@media (max-width: 780px) {
+  .stats { grid-template-columns: repeat(3, 1fr); }
+  .header { padding: 0 1.25rem; }
 }
 
-@media (max-width: 540px) {
-  .stats { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-  .stat-value { font-size: 1.8rem; }
-  .filter-pills { display: none; }
+/* ════════════════════════════════════════════════════════════════════════════
+   MOBILE  ·  ≤ 640px  ·  Baseline: 375px
+════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  html { font-size: 14px; }
+
+  /* ── HEADER ── */
+  .header {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 52px 44px;
+    height: auto;
+    padding: 0;
+    gap: 0;
+  }
+  .header-brand {
+    padding: 0 1rem;
+    align-self: center;
+  }
+  .header-actions {
+    padding: 0 1rem;
+    align-self: center;
+    justify-content: flex-end;
+  }
+
+  /* Date bar: full-width second row, always visible */
+  .header-center {
+    display: flex !important;
+    position: relative;           /* anchor for the date-input overlay */
+    order: 10;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    padding: 0 0.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .date-display {
+    min-width: 0;
+    flex: 1;
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 0 0.25rem;
+    /* visual tap feedback */
+    border-radius: var(--radius);
+    transition: background 0.1s;
+  }
+  .date-display:active { background: var(--border); }
+
+  /* Arrow buttons — 44×44px minimum tap target */
+  .date-arrow {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    border-radius: var(--radius);
+  }
+
+  /* Invisible date input overlays the date-display area so
+     tapping it opens the native mobile date picker directly.
+     Sits between the two arrow buttons. */
+  .date-input-hidden {
+    position: absolute;
+    left: 52px;    /* clear the prev-arrow button */
+    right: 52px;   /* clear the next-arrow button */
+    top: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    opacity: 0;
+    pointer-events: auto;   /* re-enabled — was none */
+    cursor: pointer;
+    z-index: 5;
+  }
+
+  /* Nouveau RDV — icon-only pill on mobile */
+  .btn-new {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  .btn-new span:last-child { display: none; }
+  .btn-new-icon { font-size: 1.4rem; font-weight: 300; }
+
+  /* ── MAIN ── */
+  .main { padding: 0.875rem 0.875rem 6rem; }
+
+  /* ── STATS ── */
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.875rem;
+  }
+  /* Revenue card: full-width row, horizontal layout */
+  .stat-card.revenue {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+  .stat-card.revenue .stat-label { margin-bottom: 0; flex: 1; font-size: 0.68rem; }
+  .stat-card.revenue .stat-value { font-size: 1.3rem; padding-top: 0; }
+  .stat-card.revenue .stat-bar   {
+    position: static;
+    width: 4px; height: 32px;
+    border-radius: 2px;
+    order: -1;
+    flex-shrink: 0;
+  }
+  .stat-card { padding: 0.75rem 0.75rem 0.625rem; }
+  .stat-value { font-size: 1.9rem; }
+
+  /* ── TODAY LABEL — make it prominent ── */
+  .date-display.is-today {
+    color: var(--green-mid);
+    font-weight: 700;
+  }
+  .date-display.is-today::after {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.82rem;
+  }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.875rem;
+  }
+  .search-wrap { min-width: 100%; flex: none; }
+  .search-input {
+    height: 46px;
+    font-size: 0.95rem;
+    padding-left: 2.25rem;
+    border-radius: var(--radius-lg);
+  }
+
+  /* Filter pills: horizontal scroll, never hidden */
+  .filter-pills {
+    display: flex !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.35rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .filter-pills::-webkit-scrollbar { display: none; }
+  .pill {
+    flex-shrink: 0;
+    height: 36px;
+    padding: 0 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-lg);
+  }
+
+  /* ── TABLE → APPOINTMENT CARD LIST ── */
+  .table-wrap {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  /* Make entire table a block stack */
+  .appt-table          { display: block; width: 100%; }
+  .appt-table thead    { display: none; }
+  .appt-table tbody    { display: flex; flex-direction: column; gap: 0.625rem; }
+
+  /* Each row becomes a card with a 2-col grid */
+  .appt-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+  .appt-table tbody tr:active { box-shadow: var(--shadow); }
+
+  /* Today card: left accent stripe */
+  .appt-table tbody tr.is-today {
+    border-left: 3px solid var(--green-line);
+  }
+  .appt-table tbody tr.is-today td:first-child { box-shadow: none; }
+
+  /* Reset all td display */
+  .appt-table td {
+    display: block;
+    padding: 0;
+    border-bottom: none;
+    background: transparent !important;
+    vertical-align: top;
+  }
+
+  /* ── CARD CELL LAYOUT ──
+     td:nth-child(1) = Réf.   (hidden)
+     td:nth-child(2) = Heure  → top-left
+     td:nth-child(3) = Client → second row, full width
+     td:nth-child(4) = Service→ third row, full width
+     td:nth-child(5) = Statut → top-right (same row as time)
+     td:nth-child(6) = Actions→ bottom row, full width
+  ── */
+
+  /* Ref: hidden */
+  .appt-table td:nth-child(1) { display: none; }
+
+  /* Time: top-left, large mono */
+  .appt-table td:nth-child(2) {
+    grid-row: 1;
+    grid-column: 1;
+    padding: 0.875rem 0.5rem 0.2rem 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    font-family: var(--mono);
+  }
+
+  /* Status badge: top-right */
+  .appt-table td:nth-child(5) {
+    grid-row: 1;
+    grid-column: 2;
+    padding: 0.875rem 1rem 0.2rem 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  /* Client: second row, full width */
+  .appt-table td:nth-child(3) {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    padding: 0.2rem 1rem 0.2rem;
+  }
+  .cell-client-name  { font-size: 0.95rem; font-weight: 600; }
+  .cell-client-phone { font-size: 0.78rem; margin-top: 1px; }
+
+  /* Service: third row, full width */
+  .appt-table td:nth-child(4) {
+    grid-row: 3;
+    grid-column: 1 / -1;
+    padding: 0.2rem 1rem 0.75rem;
+    font-size: 0.85rem;
+    color: var(--ink-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Actions: bottom row, full width */
+  .appt-table td:nth-child(6) {
+    grid-row: 4;
+    grid-column: 1 / -1;
+    padding: 0.625rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .actions { flex-direction: column; gap: 0.4rem; }
+  .act-btn {
+    width: 100%;
+    min-height: 44px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+  }
+  /* Colour-filled action buttons on mobile (easier to distinguish) */
+  .act-btn.done   { border-color: var(--green-line); color: var(--green);  background: var(--green-light); }
+  .act-btn.absent { border-color: var(--amber);      color: var(--amber);  background: var(--amber-light); }
+  .act-btn.cancel { border-color: var(--red);        color: var(--red);    background: var(--red-light);   }
+
+  /* Empty state — stays as a card */
+  .appt-table tbody tr:has(.empty-state) { display: block; }
+  .appt-table td.empty-state {
+    display: block !important;
+    padding: 3rem 1rem !important;
+    border-bottom: none !important;
+  }
+
+  /* ── MODAL → BOTTOM SHEET ── */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal {
+    max-width: 100%;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 92svh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: sheetUp 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  @keyframes sheetUp {
+    from { transform: translateY(100%); opacity: 0.6; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  /* Drag handle indicator */
+  .modal-header {
+    padding: 0 1.25rem 1rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .modal-header::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--border-dark);
+    border-radius: 2px;
+    margin: 0.875rem auto 0.875rem;
+    flex-shrink: 0;
+  }
+  .modal-header h2 { font-size: 1rem; }
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    width: 32px;
+    height: 32px;
+  }
+  .modal-body {
+    padding: 0.875rem 1.25rem;
+    gap: 0.875rem;
+  }
   .form-row { grid-template-columns: 1fr; }
-  .appt-table .col-id { display: none; }
-  .appt-table .col-service { display: none; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 1rem; /* prevent iOS zoom */
+    padding: 0.65rem 0.875rem;
+    min-height: 46px;
+  }
+  .modal-footer {
+    padding: 0.875rem 1.25rem;
+    padding-bottom: max(0.875rem, env(safe-area-inset-bottom));
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+  .btn-ghost,
+  .btn-confirm {
+    width: 100%;
+    min-height: 48px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+  }
+
+  /* ── TOAST ── */
+  #toast {
+    bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
+    max-width: calc(100vw - 2rem);
+    white-space: normal;
+    text-align: center;
+    font-size: 0.875rem;
+  }
+}
+
+/* ── Date-change slide animations (all screen sizes) ───────────────────── */
+@keyframes dateSlideFromRight {
+  from { opacity: 0.5; transform: translateX(18px); }
+  to   { opacity: 1;   transform: translateX(0); }
+}
+@keyframes dateSlideFromLeft {
+  from { opacity: 0.5; transform: translateX(-18px); }
+  to   { opacity: 1;   transform: translateX(0); }
+}
+.main.date-anim-next { animation: dateSlideFromRight 0.22s ease; }
+.main.date-anim-prev { animation: dateSlideFromLeft  0.22s ease; }
+
+/* Swipe hint — shown briefly on first load on mobile */
+@media (max-width: 640px) {
+  .swipe-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    padding: 0.4rem 0 0.1rem;
+    user-select: none;
+    pointer-events: none;
+    animation: hintFade 3s ease 1s both;
+  }
+  @keyframes hintFade {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }
+    75%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
 }
